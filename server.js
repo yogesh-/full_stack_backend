@@ -101,10 +101,11 @@ app.patch("/update_db", (req, res) => {
 
 // Delete
 
-app.delete("/delete", (req, res) => {
-  let data = { id: 1 };
-  let sql = "DELETE FROM alpha WHERE ?";
-  let query = db.query(sql, data, (err, result) => {
+app.delete("/delete/:id", (req, res) => {
+  let id = req.params.id;
+  console.log(id);
+  let sql = "DELETE FROM alpha WHERE id = ?";
+  let query = db.query(sql, id, (err, result) => {
     if (err) throw err;
     res.send(result);
   });
