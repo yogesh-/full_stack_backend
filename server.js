@@ -5,12 +5,32 @@ bodyParser = require("body-parser");
 
 const port = process.env.PORT || 5000; // port number
 
+// for local database Wamp / xampp
+
+// const db = mysql.createConnection({
+//   host: "localhost",
+//   user: "yogupta",
+//   password: "yogupta@123",
+//   database: "yogupta",
+// });
+
+// wamp server
+
 const db = mysql.createConnection({
   host: "localhost",
-  user: "yogupta",
-  password: "yogupta@123",
-  database: "yogupta",
+  user: "root",
+  password: "",
+  database: "alpha",
 });
+
+// for online mysql database - https://remotemysql.com/
+
+// const db = mysql.createConnection({
+//   host: "remotemysql.com",
+//   user: "IKz5qwZw0G",
+//   password: "NVmr1s1500",
+//   database: "IKz5qwZw0G",
+// });
 
 db.connect((err) => {
   if (err) {
@@ -64,10 +84,10 @@ app.post("/formPost", (req, res) => {
 
 app.get("/db_manual", (req, res) => {
   let data = {
-    Name: "Manual",
-    Age: "34",
-    City: "Data Entry",
-    Country: "from Express",
+    fname: "Manual",
+    age: "34",
+    city: "Data Entry",
+    country: "from Express",
   };
   let sql = "INSERT INTO alpha SET ?";
   let query = db.query(sql, data, (err, result) => {
@@ -78,9 +98,8 @@ app.get("/db_manual", (req, res) => {
 });
 
 // READ data from database
-app.get("/read_db", (req, res) => {
-  let sql = "SELECT * FROM alpha";
-  // let data = { id: 2 };
+app.get("/read_db/", (req, res) => {
+  let sql = `SELECT * FROM alpha`;
   let query = db.query(sql, (err, result) => {
     if (err) throw err;
     res.send(result); // result of the query. Gives the entire object with id of 5.
@@ -88,14 +107,31 @@ app.get("/read_db", (req, res) => {
   });
 });
 
-// Update
+// Update - works
 
 app.patch("/update_db", (req, res) => {
-  let data = { id: 2 };
-  let sql = "UPDATE alpha SET Name='RoHiT' WHERE ?";
+  let data = { id: 6 };
+  let sql = "UPDATE alpha SET fname='shabnam' WHERE ?";
   let query = db.query(sql, data, (err, result) => {
     if (err) throw err;
     res.send(result);
+    console.log(result);
+  });
+});
+
+// Update user
+
+app.put("/update_user/:id", (req, res) => {
+  let new_fname = req.body.fname;
+  let new_age = req.body.age;
+  let new_city = req.body.city;
+  let new_country = req.body.country;
+
+  let sql = `UPDATE alpha SET fname='${new_fname}', age='${new_age}', city='${new_city}', country='${new_country}' WHERE id=${req.params.id}`;
+  let query = db.query(sql, (err, result) => {
+    if (err) throw err;
+    res.send(result);
+    console.log(result);
   });
 });
 
